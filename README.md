@@ -1,61 +1,45 @@
-# Anomaly Detection with Isolation Forest
+# Anomaly Detection Framework
 
 ## Description
 
-This Python script is designed for detecting data quality issues in datasets by identifying anomalies within specified columns using the Isolation Forest algorithm. It's particularly useful for datasets where data quality issues may not be immediately apparent, allowing analysts and data scientists to quickly flag and investigate potential outliers.
+This Python script is designed for detecting data quality issues in datasets by identifying anomalies within specified columns. Initially configured to use the Isolation Forest algorithm, it now supports a flexible framework that allows for the integration of multiple anomaly detection strategies. This adaptability makes it especially useful for datasets where data quality issues may not be immediately apparent, enabling analysts and data scientists to quickly flag and investigate potential outliers.
 
 ### Purpose
 
-- **Data Quality Assurance**: Helps in ensuring the integrity and quality of data by detecting anomalies that could indicate data quality issues.
-- **Automated Analysis**: Facilitates automated analysis of multiple columns within large datasets, improving efficiency in data quality assessments.
+- **Data Quality Assurance**: Aids in ensuring the integrity and quality of data by detecting anomalies indicative of data quality issues.
+- **Automated Analysis**: Enables automated analysis of multiple columns within large datasets, streamlining efficiency in data quality assessments.
+- **Flexible Strategy Integration**: Facilitates the use of various anomaly detection methods, enhancing the script's applicability to diverse data characteristics and requirements.
 
 ### Restrictions
 
-- **Data Format**: The script requires the input dataset to be in a CSV format. Each column tested for anomalies should be numeric, as the Isolation Forest algorithm works with numerical data.
-- **Data Distribution**: While the Isolation Forest algorithm is robust and generally performs well on diverse data distributions, it is important to note that extreme data distributions or highly skewed datasets might affect the detection sensitivity and specificity. Its recommended to preprocess or transform data to mitigate extreme skewness or to carefully tune the algorithm's parameters (such as `contamination`) to better suit their specific dataset characteristics.
-- **Scalability**: The script is designed to be scalable and can handle multiple columns within large datasets efficiently. However, the computational time and resources required will increase with the size of the dataset and the number of columns being analyzed.
+- **Data Format**: Requires the input dataset in CSV format, with each column tested for anomalies being numeric due to the numerical nature of the included and potential anomaly detection algorithms.
+- **Data Distribution and Scalability**: Similar to the original version, while designed for scalability and robust against diverse data distributions, performance may vary based on the dataset's characteristics and the computational resources available.
 
 ### Ideal Use Cases
 
-This script is ideally used as a preliminary step in the data cleaning and preprocessing pipeline, allowing data practitioners to identify and address data quality issues early in the data analysis workflow. It is suitable for a wide range of applications, from financial analysis and risk assessment to customer data management and beyond, wherever data quality is paramount.
+Ideal for a preliminary step in the data cleaning and preprocessing pipeline across various applications where data quality is critical. Its flexible strategy approach allows for customized anomaly detection tailored to specific data characteristics, making it versatile for financial analysis, customer data management, and more.
 
 ## Features
 
-- **Isolation Forest Implementation**: Utilizes the Isolation Forest algorithm for efficient anomaly detection in data.
-- **Flexible Data Processing**: Allows for anomaly detection on multiple columns of a dataset.
-- **Summary Generation**: Generates a summary table detailing the anomaly detection process and outcomes for each tested column.
-- **Results Saving**: Outputs the modified dataset with anomaly flags to a new CSV file for further analysis.
+- **Flexible Anomaly Detection Implementation**: Supports multiple anomaly detection strategies, including the default Isolation Forest, for efficient anomaly detection.
+- **Configurable and Extensible**: Easily extendable to include new anomaly detection algorithms by implementing the AnomalyDetectionStrategy interface.
+- **Summary Generation and Results Saving**: Similar to the original, it generates a detailed summary and outputs the dataset with anomaly flags.
+
+## Example Files
+
+The repository includes two example CSV files:
+- `loan_data.csv`: An example input file containing loan data for anomaly detection.
+- `loan_data_anomaly.csv`: An example output file generated by the script, showcasing the detected anomalies with flags.
+
+These files serve as a practical demonstration of how the script processes input data and produces output with anomalies flagged.
 
 ## Requirements
 
-To run this script, you need Python 3.x installed along with the following packages:
-- pandas
-- scikit-learn
-- numpy
+The script requires Python 3.x with pandas, scikit-learn, and numpy installed.
 
 ## Usage
 
-1. **Prepare Your Dataset**: Ensure your dataset is in a CSV format with the columns you wish to test for anomalies.
-2. **Modify the Script Parameters** (Optional): Adjust the parameters such as `n_estimators`, `contamination`, and `score_threshold` in the `AnomalyDetector` class instantiation as needed.
-3. **Run the Script**: Execute the script by running the following command in your terminal:
-
-python main.py
-
-Replace `main.py` with the path to the script if necessary.
-
-4. **Review the Output**: The script will print a summary table to the console and save a new CSV file with the anomaly flags for each tested column. The new file name will be the original file name appended with `_anomaly`.
-
-## Contributing
-
-Contributions to this repository are welcome. Please follow the standard fork-pull request workflow.
-
-- Fork the repository
-- Create your feature branch (`git checkout -b feature/AmazingFeature`)
-- Commit your changes (`git commit -am 'Add some AmazingFeature'`)
-- Push to the branch (`git push origin feature/AmazingFeature`)
-- Open a pull request
-
-## License
-
-Distributed under the MIT License. 
-
+1. **Prepare Your Dataset**: Ensure it is in CSV format with numeric columns for anomaly testing.
+2. **Configure Detection Strategies** (Optional): Define or adjust anomaly detection strategies as required by implementing the AnomalyDetectionStrategy interface and adjusting script parameters accordingly.
+3. **Run the Script**: Execute `python main.py`, replacing `main.py` with your script's path.
+4. **Review the Output**: Examine the summary table and the new CSV file with appended anomaly flags, named with the original file name plus `_anomaly`.
