@@ -83,6 +83,29 @@ class ZScoreStrategy(AnomalyDetectionStrategy):
         # Calculate and return the absolute Z-Scores as the "anomaly score"
         return np.abs((X - self.mean) / self.std).squeeze()
 
+# Implementation of IQR Strategy
+class IQRStrategy(AnomalyDetectionStrategy):
+    def __init__(self, multiplier=1.5):
+        self.multiplier = multiplier
+
+    def fit(self, X):
+        # Calculate the first and third quartile, and the IQR.
+        self.Q1 = np.percentile(X, 25)
+        self.Q3 = np.percentile(X, 75)
+        self.IQR = self.Q3 - self.Q1
+
+    def predict(self, X):
+        # Calculate the outlier flags based on IQR thresholds.
+        lower_bound = self.Q1 - (self.multiplier * self.IQR)
+        upper_bound = self.Q3 + (self.multiplier * self.IQR)
+        anomaly_flags = (X < lower_bound) | (X > upper_bound)
+        return anomaly_flags.squeeze()  # Ensure it returns an array matching the number of rows in X
+
+    def score(self, X):
+        # For scoring, we'll use the distance of points outside the bounds divided by the IQR as a measure.
+        scores = np.maximum(0, np.abs(X - self.Q3) - self.IQR, np.abs(X - self.Q1) - self.IQR) / self.IQR
+        return scores.squeeze()
+
 
 # AnomalyDetector class designed to work with any strategy that follows the AnomalyDetectionStrategy interface.
 class AnomalyDetector:
@@ -139,9 +162,10 @@ def main():
     local_outlier_factor_strategy = LocalOutlierFactorStrategy(n_neighbors=20, contamination='auto')
     isolation_forest_strategy = IsolationForestStrategy(n_estimators=100, contamination='auto')
     z_score_strategy = ZScoreStrategy(threshold=3)  # Add the ZScoreStrategy with a threshold of 3
+    iqr_strategy = IQRStrategy(multiplier=3)  # Initialize IQRStrategy with a default multiplier
 
     # Add the new ZScoreStrategy to the strategies list
-    strategies = [local_outlier_factor_strategy, isolation_forest_strategy, z_score_strategy]
+    strategies = [local_outlier_factor_strategy, isolation_forest_strategy, z_score_strategy, iqr_strategy]
 
     detector = AnomalyDetector(strategies)
     summary_table = detector.create_summary(df, column_names)
