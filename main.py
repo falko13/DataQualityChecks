@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.ensemble import IsolationForest
 from sklearn.neighbors import LocalOutlierFactor
 import os
+import numpy as np
 
 
 # Strategy interface for anomaly detection to allow flexibility in the implementation of various algorithms.
@@ -61,6 +62,28 @@ class LocalOutlierFactorStrategy(AnomalyDetectionStrategy):
         return -self.model.negative_outlier_factor_  # Returning the scores for use elsewhere
 
 
+# Implementation of Z-Score Strategy
+class ZScoreStrategy(AnomalyDetectionStrategy):
+    def __init__(self, threshold=3):
+        self.threshold = threshold
+
+    def fit(self, X):
+        # Z-Score fitting isn't required as it's a stateless operation, but we calculate mean and std here for efficiency.
+        self.mean = np.mean(X)
+        self.std = np.std(X)
+
+    def predict(self, X):
+        # Calculate Z-Scores for each data point
+        z_scores = (X - self.mean) / self.std
+        # Flag as anomaly if Z-Score is greater than the threshold
+        anomaly_flags = np.abs(z_scores) > self.threshold
+        return anomaly_flags.squeeze()  # Ensure it returns an array matching the number of rows in X
+
+    def score(self, X):
+        # Calculate and return the absolute Z-Scores as the "anomaly score"
+        return np.abs((X - self.mean) / self.std).squeeze()
+
+
 # AnomalyDetector class designed to work with any strategy that follows the AnomalyDetectionStrategy interface.
 class AnomalyDetector:
     def __init__(self, strategies):
@@ -112,9 +135,13 @@ def main():
     df = pd.read_csv(csv_file_path)
     column_names = ['CoapplicantIncome', 'LoanAmount']
 
+    # Initialize strategies
     local_outlier_factor_strategy = LocalOutlierFactorStrategy(n_neighbors=20, contamination='auto')
     isolation_forest_strategy = IsolationForestStrategy(n_estimators=100, contamination='auto')
-    strategies = [local_outlier_factor_strategy, isolation_forest_strategy]
+    z_score_strategy = ZScoreStrategy(threshold=3)  # Add the ZScoreStrategy with a threshold of 3
+
+    # Add the new ZScoreStrategy to the strategies list
+    strategies = [local_outlier_factor_strategy, isolation_forest_strategy, z_score_strategy]
 
     detector = AnomalyDetector(strategies)
     summary_table = detector.create_summary(df, column_names)

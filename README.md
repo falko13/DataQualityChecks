@@ -21,10 +21,19 @@ Ideal for a preliminary step in the data cleaning and preprocessing pipeline acr
 
 ## Features
 
-- **Flexible Anomaly Detection Implementation**: Supports multiple anomaly detection strategies, including Isolation Forest and Local Outlier Factor (LOF), each with configurable parameters for efficient anomaly detection.
-- **Score-Based Anomaly Detection**: Incorporates anomaly scores into the final output, enabling a quantitative measure of anomalousness for each detected outlier, particularly useful for nuanced analysis and prioritization.
-- **Configurable and Extensible**: Easily extendable to include new anomaly detection algorithms by implementing the AnomalyDetectionStrategy interface.
-- **Summary Generation and Results Saving**: Generates a detailed summary and outputs the dataset with anomaly flags and scores, facilitating in-depth analysis and review.
+- **Flexible Anomaly Detection Implementation**: Supports multiple anomaly detection strategies, including Isolation Forest, Local Outlier Factor (LOF), and now Z-Score, each with configurable parameters for efficient anomaly detection. This variety allows for tailored anomaly detection approaches to fit different dataset characteristics and anomaly detection needs.
+
+- **Z-Score Anomaly Detection Strategy**: The newly integrated Z-Score strategy enables anomaly detection based on standard deviation from the mean. This strategy is particularly effective for datasets that approximate a normal distribution, as it identifies outliers by how many standard deviations away from the mean they are.
+    ### Assumptions for Using Z-Score:
+    - **Normal Distribution**: The Z-Score method assumes the data follows a normal (Gaussian) distribution. For datasets that significantly deviate from this assumption, other strategies like LOF may be more appropriate.
+    - **Outlier Threshold**: A common threshold is a Z-Score of 3 or -3, identifying data points that lie beyond three standard deviations from the mean as outliers. This threshold can be adjusted based on specific analysis needs or to accommodate different levels of outlier sensitivity.
+    - **Impact of Sample Size**: While the Z-Score method can be applied to datasets of any size, its reliability is higher with larger datasets. Small sample sizes may result in a biased estimation of the mean and standard deviation, affecting the accuracy of outlier detection.
+    - **Sensitivity to Skewness**: The method may not perform well with skewed distributions. For datasets with significant skewness, data transformation or alternative strategies might be necessary to accurately identify outliers.
+
+- **Score-Based Anomaly Detection**: Incorporates anomaly scores into the final output, enabling a quantitative measure of anomalousness for each detected outlier. This feature is now extended with the inclusion of Z-Score strategy, providing a standard measure for the degree of deviation from the norm.
+- **Configurable and Extensible**: Easily extendable to include new anomaly detection algorithms by implementing the AnomalyDetectionStrategy interface. The addition of the Z-Score strategy exemplifies the framework's flexibility and adaptability to different statistical approaches for anomaly detection.
+- **Summary Generation and Results Saving**: Generates a detailed summary and outputs the dataset with anomaly flags and scores, facilitating in-depth analysis and review. This comprehensive approach aids in the thorough examination of potential data quality issues, leveraging multiple strategies for a nuanced analysis.
+
 
 ## Example Files
 
